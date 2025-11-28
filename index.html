@@ -10,137 +10,157 @@
         /* IMPORTANT: Clemson colors are ONLY for interface design */
         /* The color picker generates 200 diverse colors independently */
         /* Interface colors: Clemson Orange (#F66733) and Purple (#522D80) */
-        
-        /* Top 5 Section Styles */
-        .top-five-section {
+
+        /* Consolidated Top Colors Section */
+        .top-colors-section {
             background: var(--surface-color);
             border-radius: 12px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: var(--shadow-sm);
-            border-left: 5px solid #F66733;
-        }
-        
-        .top-five-section h2 {
-            color: #F66733;
+            padding: 24px;
             margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
         }
-        
-        .top-five-container {
+
+        .top-colors-header {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .top-colors-header h2 {
+            color: #F66733;
+            margin: 0;
+            font-size: 1.25rem;
+        }
+
+        .top-colors-description {
+            color: #7F8C8D;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .top-colors-container {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 15px;
-            min-height: 150px;
-            padding: 20px;
+            gap: 12px;
+            min-height: 100px;
+            padding: 16px;
             background: #FAFBFC;
             border-radius: 8px;
         }
-        
-        .top-five-item {
+
+        .top-colors-container .color-item {
             position: relative;
         }
-        
-        .top-five-rank {
+
+        .top-colors-container .top-five-rank {
             position: absolute;
-            top: -10px;
-            left: -10px;
+            top: -8px;
+            left: -8px;
             background: #F66733;
             color: white;
-            width: 32px;
-            height: 32px;
+            width: 24px;
+            height: 24px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 0.9rem;
-            box-shadow: var(--shadow-md);
+            font-size: 0.75rem;
+            box-shadow: var(--shadow-sm);
             z-index: 10;
         }
-        
-        /* Final Results Section Styles */
-        .final-results-section {
-            background: linear-gradient(135deg, #F66733, #522D80);
-            color: white;
-            border-radius: 12px;
-            padding: 40px;
-            margin-bottom: 30px;
-            box-shadow: var(--shadow-lg);
-            display: none;
-        }
-        
-        .final-results-section h2 {
-            color: white;
-            font-size: 2rem;
-            margin-bottom: 10px;
+
+        .top-colors-section .export-section {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
             text-align: center;
         }
-        
-        .final-results-subtitle {
+
+        .top-colors-section .export-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .top-colors-section .btn-export {
+            padding: 8px 16px;
+            font-size: 0.85rem;
+        }
+
+        .top-colors-empty {
             text-align: center;
-            margin-bottom: 30px;
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-        
-        .final-results-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 25px;
-            border-radius: 8px;
-        }
-        
-        .final-result-item {
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: var(--shadow-md);
-            transition: transform 0.3s ease;
-        }
-        
-        .final-result-item:hover {
-            transform: translateY(-5px);
-        }
-        
-        .final-rank {
-            background: #F66733;
-            color: white;
-            text-align: center;
-            padding: 8px;
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
-        
-        .final-color-block {
-            height: 120px;
-        }
-        
-        .final-color-info {
-            padding: 15px;
-            color: #2C3E50;
-        }
-        
-        .final-color-name {
-            font-weight: bold;
-            font-size: 1.1rem;
-            margin-bottom: 5px;
-            text-transform: capitalize;
-        }
-        
-        .final-color-hex {
-            font-family: 'Courier New', monospace;
+            padding: 24px;
             color: #7F8C8D;
-            margin-bottom: 5px;
         }
-        
-        .final-color-rating {
-            font-size: 0.9rem;
-            color: #F66733;
-            font-weight: 600;
+
+        @media (max-width: 768px) {
+            .top-colors-container {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 8px;
+                padding: 12px;
+            }
+
+            .top-colors-container .top-five-rank {
+                width: 20px;
+                height: 20px;
+                font-size: 0.65rem;
+                top: -6px;
+                left: -6px;
+            }
         }
-        
+
+        /* Collapsible Sections */
+        .collapsible .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            padding: 4px 0;
+        }
+
+        .collapsible .section-header h2 {
+            margin: 0;
+        }
+
+        .collapse-indicator {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease;
+        }
+
+        .collapsible.collapsed .collapse-indicator {
+            transform: rotate(0deg);
+        }
+
+        .collapsible:not(.collapsed) .collapse-indicator {
+            transform: rotate(45deg);
+        }
+
+        .collapsible .section-content {
+            max-height: 500px;
+            overflow: hidden;
+            transition: max-height 0.3s ease, opacity 0.2s ease, margin 0.3s ease;
+            opacity: 1;
+            margin-top: 16px;
+        }
+
+        .collapsible.collapsed .section-content {
+            max-height: 0;
+            opacity: 0;
+            margin-top: 0;
+        }
+
         /* High Contrast Mode Improvements */
         body.high-contrast {
             --background-color: #000000;
@@ -325,27 +345,32 @@
             </div>
         </section>
 
-        <!-- Progress Section -->
-        <section class="progress-section">
-            <h2>Session Progress</h2>
-            <div class="progress-container">
-                <div class="progress-bar-wrapper">
-                    <div id="progress-bar" class="progress-bar"></div>
-                </div>
-                <p id="progress-text" class="progress-text">0 / 20 comparisons</p>
+        <!-- Progress Section (Collapsible) -->
+        <section class="progress-section collapsible collapsed">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>Session Progress</h2>
+                <span class="collapse-indicator">+</span>
             </div>
-            <div class="analytics-display">
-                <div class="stat">
-                    <span class="stat-label">Picks:</span>
-                    <span id="picks-count" class="stat-value">0</span>
+            <div class="section-content">
+                <div class="progress-container">
+                    <div class="progress-bar-wrapper">
+                        <div id="progress-bar" class="progress-bar"></div>
+                    </div>
+                    <p id="progress-text" class="progress-text">0 / 20 comparisons</p>
                 </div>
-                <div class="stat">
-                    <span class="stat-label">Passes:</span>
-                    <span id="passes-count" class="stat-value">0</span>
-                </div>
-                <div class="stat">
-                    <span class="stat-label">Avg Decision Time:</span>
-                    <span id="avg-time" class="stat-value">0s</span>
+                <div class="analytics-display">
+                    <div class="stat">
+                        <span class="stat-label">Picks:</span>
+                        <span id="picks-count" class="stat-value">0</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Passes:</span>
+                        <span id="passes-count" class="stat-value">0</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Avg Time:</span>
+                        <span id="avg-time" class="stat-value">0s</span>
+                    </div>
                 </div>
             </div>
         </section>
@@ -378,40 +403,25 @@
             </div>
         </section>
 
-        <section class="top-five-section">
-            <h2>Current Top 5 Preferences</h2>
-            <p style="color: #7F8C8D; margin-bottom: 15px; font-style: italic;">
-                Your top-ranked colors update in real-time as you make comparisons
-            </p>
-            <div id="top-five" class="top-five-container"></div>
-        </section>
+        <!-- Your Top Colors Section (Consolidated) -->
+        <section class="top-colors-section">
+            <div class="top-colors-header">
+                <h2>Your Top Colors</h2>
+                <p class="top-colors-description">Updates in real-time as you compare</p>
+            </div>
+            <div id="top-five" class="top-colors-container" role="list" aria-label="Your top colors"></div>
+            <div id="favorites" class="favorites-container" style="display: none;"></div>
 
-        <!-- Final Results Section -->
-        <section id="final-results" class="final-results-section">
-            <h2>🎨 Here Are Your Favorite Colors! 🎨</h2>
-            <p class="final-results-subtitle">
-                Based on your preferences, here are your top 10 colors ranked from most to least preferred
-            </p>
-            <div id="final-results-grid" class="final-results-grid"></div>
-        </section>
-
-        <!-- Favorites Section -->
-        <section class="favorites-section">
-            <h2>Your Personalized Palette</h2>
-            <p class="favorites-description">Colors ranked by your implicit preferences (top to bottom)</p>
-            <div id="favorites" class="favorites-container" role="list" aria-label="Your favorite colors"></div>
-            
-            <div class="export-section">
-                <h3>Export Your Palette</h3>
+            <div class="export-section" id="export-section" style="display: none;">
                 <div class="export-buttons">
                     <button id="export-json" class="btn btn-export">
-                        <span class="btn-icon">📄</span> Export JSON
+                        <span class="btn-icon">📄</span> JSON
                     </button>
                     <button id="export-css" class="btn btn-export">
-                        <span class="btn-icon">🎨</span> Export CSS
+                        <span class="btn-icon">🎨</span> CSS
                     </button>
                     <button id="export-hex" class="btn btn-export">
-                        <span class="btn-icon">📋</span> Export Hex Codes
+                        <span class="btn-icon">📋</span> Hex
                     </button>
                 </div>
             </div>
@@ -584,5 +594,11 @@
     <script src="palette-library.js"></script>
     <script src="app-init.js"></script>
     <script src="enhanced-integration.js"></script>
+    <script>
+        function toggleSection(header) {
+            var section = header.closest('.collapsible');
+            section.classList.toggle('collapsed');
+        }
+    </script>
 </body>
 </html>

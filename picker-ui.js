@@ -585,17 +585,21 @@
 
     PickerUI.prototype.updateTopFive = function() {
         if (!this.elem.topFive) return;
-        
+
         var allTopColors = this.state.getTopColors(100);
         var topColors = allTopColors.filter(function(c) { return c.wins > 0; }).slice(0, 5);
-        
+
         this.elem.topFive.empty();
-        
+
         if (topColors.length === 0) {
-            this.elem.topFive.html('<p style="color: #7F8C8D; text-align: center;">No colors ranked yet. Start comparing to see your top preferences!</p>');
+            this.elem.topFive.html('<p class="top-colors-empty">Start comparing colors to see your top preferences</p>');
+            // Hide export section when no colors
+            if (this.elem.exportSection) {
+                this.elem.exportSection.hide();
+            }
             return;
         }
-        
+
         var self = this;
         topColors.forEach(function(color, index) {
             var $item = self.renderColor(color);
@@ -603,6 +607,11 @@
             $item.prepend('<span class="top-five-rank">#' + (index + 1) + '</span>');
             self.elem.topFive.append($item);
         });
+
+        // Show export section when there are colors
+        if (this.elem.exportSection && topColors.length >= 3) {
+            this.elem.exportSection.show();
+        }
     };
 
     PickerUI.prototype.updateFinalResults = function() {

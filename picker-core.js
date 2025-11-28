@@ -329,18 +329,89 @@
 
     EloPickerState.prototype.selectDiverseBatch = function(available, size) {
         if (available.length <= size) return available;
-        
-        const sorted = [...available].sort((a, b) => b.eloRating - a.eloRating);
+
+        // Group colors by hue ranges (similar colors together)
+        const hueGroups = this.groupByHue(available);
+
         const batch = [];
-        
-        const tierSize = Math.ceil(sorted.length / size);
-        for (let i = 0; i < size && sorted.length > 0; i++) {
-            const tierStart = (i * tierSize) % sorted.length;
-            const selected = sorted.splice(tierStart, 1)[0];
-            if (selected) batch.push(selected);
+        const usedGroups = new Set();
+
+        // First, add some high-rated colors (but not always the top one)
+        // Give higher-rated colors more chance but not guaranteed inclusion
+        const sortedByRating = [...available].sort((a, b) => b.eloRating - a.eloRating);
+
+        // Skip the very top colors sometimes to avoid them appearing every batch
+        const skipTop = Math.random() < 0.6; // 60% chance to skip top colors
+        const startIndex = skipTop ? Math.floor(Math.random() * 3) + 1 : 0;
+
+        // Add 2-3 higher-rated colors with some randomness
+        const highRatedCount = 2 + Math.floor(Math.random() * 2);
+        for (let i = startIndex; i < sortedByRating.length && batch.length < highRatedCount; i++) {
+            const color = sortedByRating[i];
+            // 70% chance to include each high-rated color (not guaranteed)
+            if (Math.random() < 0.7) {
+                batch.push(color);
+                usedGroups.add(this.getHueGroup(color.hsl.h));
+            }
         }
-        
+
+        // Fill rest with colors from diverse hue groups
+        const groupKeys = Object.keys(hueGroups).sort(() => Math.random() - 0.5);
+
+        for (const groupKey of groupKeys) {
+            if (batch.length >= size) break;
+
+            const group = hueGroups[groupKey];
+            if (group.length === 0) continue;
+
+            // If this hue group isn't represented yet, add a color from it
+            if (!usedGroups.has(parseInt(groupKey))) {
+                // Pick a random color from the group (not always the highest rated)
+                const randomIndex = Math.floor(Math.random() * Math.min(3, group.length));
+                const color = group[randomIndex];
+
+                if (!batch.includes(color)) {
+                    batch.push(color);
+                    usedGroups.add(parseInt(groupKey));
+                }
+            }
+        }
+
+        // Fill remaining slots with random colors not yet in batch
+        const remaining = available.filter(c => !batch.includes(c));
+        while (batch.length < size && remaining.length > 0) {
+            const randomIndex = Math.floor(Math.random() * remaining.length);
+            batch.push(remaining.splice(randomIndex, 1)[0]);
+        }
+
+        // Sort batch by hue for visual grouping (similar colors adjacent)
+        batch.sort((a, b) => a.hsl.h - b.hsl.h);
+
         return batch;
+    };
+
+    EloPickerState.prototype.groupByHue = function(colors) {
+        // Group colors into 12 hue ranges (30 degrees each)
+        const groups = {};
+        for (let i = 0; i < 12; i++) {
+            groups[i] = [];
+        }
+
+        colors.forEach(color => {
+            const groupIndex = this.getHueGroup(color.hsl.h);
+            groups[groupIndex].push(color);
+        });
+
+        // Sort each group by rating (highest first)
+        Object.values(groups).forEach(group => {
+            group.sort((a, b) => b.eloRating - a.eloRating);
+        });
+
+        return groups;
+    };
+
+    EloPickerState.prototype.getHueGroup = function(hue) {
+        return Math.floor(hue / 30) % 12;
     };
 
     EloPickerState.prototype.pick = function(picked) {
