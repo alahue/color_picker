@@ -356,13 +356,21 @@
                 alert('Please enter a palette name');
                 return;
             }
-            
+
             var description = $('#palette-description-input').val().trim();
             var tagsInput = $('#palette-tags-input').val().trim();
             var tags = tagsInput ? tagsInput.split(',').map(t => t.trim()) : [];
-            
-            var topColors = pickerState.getTopColors(10);
-            
+
+            // Get top colors but only include those the user has selected at least once (wins > 0)
+            // Maximum 10 colors in a saved palette
+            var allTopColors = pickerState.getTopColors(100);
+            var topColors = allTopColors.filter(function(c) { return c.wins > 0; }).slice(0, 10);
+
+            if (topColors.length === 0) {
+                alert('No colors have been selected yet. Please make some comparisons first.');
+                return;
+            }
+
             var palette = paletteLibrary.savePalette({
                 name: name,
                 description: description,
@@ -379,14 +387,14 @@
                 sessionDuration: Date.now() - pickerState.analytics.sessionStartTime
             });
             
-            // Record session for consistency tracking
+            // Record session for consistency tracking (only colors user has selected)
             consistencyTracker.recordSession({
                 topColors: topColors.map(c => ({
                     id: c.id,
                     hex: c.hex,
                     eloRating: c.eloRating
                 })),
-                allColors: pickerState.colors.map(c => ({
+                allColors: pickerState.colors.filter(c => c.wins > 0).map(c => ({
                     id: c.id,
                     hex: c.hex,
                     eloRating: c.eloRating,

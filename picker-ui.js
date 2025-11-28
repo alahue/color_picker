@@ -586,8 +586,11 @@
     PickerUI.prototype.updateTopFive = function() {
         if (!this.elem.topFive) return;
 
+        // Show top 10 when session is complete, top 5 during session
+        var displayCount = this.state.sessionComplete ? 10 : 5;
+
         var allTopColors = this.state.getTopColors(100);
-        var topColors = allTopColors.filter(function(c) { return c.wins > 0; }).slice(0, 5);
+        var topColors = allTopColors.filter(function(c) { return c.wins > 0; }).slice(0, displayCount);
 
         this.elem.topFive.empty();
 
@@ -609,7 +612,7 @@
         });
 
         // Show export section when there are colors
-        if (this.elem.exportSection && topColors.length >= 3) {
+        if (this.elem.exportSection && topColors.length >= 1) {
             this.elem.exportSection.show();
         }
     };
@@ -683,9 +686,10 @@
     // ============================================
 
     PickerUI.prototype.exportPalette = function(format) {
+        // Only export colors the user has selected (wins > 0), max 10
         var allTopColors = this.state.getTopColors(100);
-        var topColors = allTopColors.filter(function(c) { return c.wins > 0; });
-        
+        var topColors = allTopColors.filter(function(c) { return c.wins > 0; }).slice(0, 10);
+
         if (topColors.length === 0) {
             alert('No colors have been selected yet. Please make some comparisons first.');
             return;
