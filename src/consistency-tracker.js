@@ -84,7 +84,27 @@
     ConsistencyTracker.prototype.loadSessions = function() {
         try {
             var data = localStorage.getItem(this.storageKey);
-            return data ? JSON.parse(data) : [];
+            var sessions = data ? JSON.parse(data) : [];
+
+            // Migrate legacy sessions: assign current userId to sessions without one
+            var self = this;
+            var migrated = false;
+            sessions = sessions.map(function(session) {
+                if (!session.userId) {
+                    session.userId = self.userId;
+                    migrated = true;
+                    console.log('Migrated legacy session:', session.id);
+                }
+                return session;
+            });
+
+            // Save migrated sessions
+            if (migrated) {
+                localStorage.setItem(this.storageKey, JSON.stringify(sessions));
+                console.log('Legacy sessions migrated to current user');
+            }
+
+            return sessions;
         } catch (e) {
             console.error('Failed to load session history:', e);
             return [];
@@ -164,8 +184,11 @@
     };
 
     ConsistencyTracker.prototype.clearCurrentUserSessions = function() {
-        // Clear only current user's sessions
-        this.sessions = this.sessions.filter(s => s.userId !== this.userId);
+        // Clear current user's sessions AND any legacy sessions without userId
+        this.sessions = this.sessions.filter(function(s) {
+            // Keep sessions that belong to OTHER users (not current user, and has a userId)
+            return s.userId && s.userId !== this.userId;
+        }.bind(this));
         this.saveSessions();
         console.log('Cleared all sessions for user:', this.userId);
     };
