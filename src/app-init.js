@@ -191,60 +191,76 @@
 // ============================================
 
 $(document).ready(function() {
-    // Wait for consistencyTracker to be available
-    setTimeout(function() {
+    // Poll for consistencyTracker to be available (handles race condition with enhanced-integration.js)
+    var checkInterval = setInterval(function() {
         if (window.consistencyTracker) {
-            updateUserIdentityUI();
-            
-            // Copy User ID button
-            $('#copy-user-id').on('click', function() {
-                var userId = window.consistencyTracker.getUserId();
-                navigator.clipboard.writeText(userId).then(function() {
-                    alert('User ID copied to clipboard!');
-                }).catch(function(err) {
-                    console.error('Failed to copy:', err);
-                    alert('User ID: ' + userId);
-                });
-            });
-            
-            // Reset User Data button
-            $('#reset-user-data').on('click', function() {
-                var confirmed = confirm(
-                    'Are you sure you want to reset your user identity?\n\n' +
-                    'This will:\n' +
-                    '• Generate a new User ID\n' +
-                    '• Delete all your session history\n' +
-                    '• Clear consistency tracking data\n' +
-                    '• Start fresh as a new user\n\n' +
-                    'This action CANNOT be undone!'
-                );
-                
-                if (confirmed) {
-                    // Clear current user's sessions
-                    window.consistencyTracker.clearCurrentUserSessions();
-                    
-                    // Generate new user ID
-                    var newUserId = window.consistencyTracker.resetUserId();
-                    
-                    // Update UI
-                    updateUserIdentityUI();
-                    
-                    // Reset picker state
-                    if (window.pickerState) {
-                        window.pickerState.reset();
-                        window.pickerUI.update();
-                        window.pickerUI.updateProgress();
-                        window.pickerUI.updateTopFive();
-                    }
-                    
-                    alert('User identity reset successfully!\n\nNew User ID: ' + newUserId);
-                }
-            });
-            
-            // Update session count periodically
-            setInterval(updateUserIdentityUI, 3000);
+            clearInterval(checkInterval);
+            initializeUserIdentityUI();
         }
-    }, 1000);
+    }, 100);
+
+    // Timeout after 5 seconds if consistencyTracker never loads
+    setTimeout(function() {
+        clearInterval(checkInterval);
+        if (!window.consistencyTracker) {
+            console.error('ConsistencyTracker failed to initialize');
+            $('#user-id-display').text('Error: Not initialized');
+        }
+    }, 5000);
+
+    function initializeUserIdentityUI() {
+        updateUserIdentityUI();
+
+        // Copy User ID button
+        $('#copy-user-id').on('click', function() {
+            var userId = window.consistencyTracker.getUserId();
+            navigator.clipboard.writeText(userId).then(function() {
+                alert('User ID copied to clipboard!');
+            }).catch(function(err) {
+                console.error('Failed to copy:', err);
+                alert('User ID: ' + userId);
+            });
+        });
+
+        // Reset User Data button
+        $('#reset-user-data').on('click', function() {
+            var confirmed = confirm(
+                'Are you sure you want to reset your user identity?\n\n' +
+                'This will:\n' +
+                '• Generate a new User ID\n' +
+                '• Delete all your session history\n' +
+                '• Clear consistency tracking data\n' +
+                '• Start fresh as a new user\n\n' +
+                'This action CANNOT be undone!'
+            );
+
+            if (confirmed) {
+                // Clear current user's sessions (including legacy sessions without userId)
+                window.consistencyTracker.clearCurrentUserSessions();
+
+                // Generate new user ID
+                var newUserId = window.consistencyTracker.resetUserId();
+
+                // Update UI
+                updateUserIdentityUI();
+
+                // Reset picker state
+                if (window.pickerState) {
+                    window.pickerState.reset();
+                    window.pickerUI.update();
+                    window.pickerUI.updateProgress();
+                    window.pickerUI.updateTopFive();
+                }
+
+                alert('User identity reset successfully!\n\nNew User ID: ' + newUserId);
+            }
+        });
+
+        // Update session count periodically
+        setInterval(updateUserIdentityUI, 3000);
+
+        console.log('User identity UI initialized');
+    }
 });
 
 function updateUserIdentityUI() {
